@@ -1,0 +1,6 @@
+To prepare this microservice for sending millions of emails a day I would suggest using multiple instances of service working in parallel.
+To provide synchronization of service instances (preventing processing same email by 2 instances) message queue like RabbitMQ could be used as competing consumers pattern implementation.
+When sendAllPendingEmails action would be triggered (by REST API or e.g. by cron job) message queue would be fed with email ids (possibly with priority to provide ordering) from database.
+Service instances would automatically consume those ids from queue (possibly in batches e.g. 10 at time), fetch emails from db and send it.
+REST action triggering sendAllPendingEmails should work asynchronously so it wouldn't block the client.
+In case of action like createAndSendEmail would be introduced, service would save email to db and populate its id to MQ where it would be queued for sending as previously.
