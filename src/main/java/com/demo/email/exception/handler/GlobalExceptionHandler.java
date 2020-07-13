@@ -1,4 +1,4 @@
-package com.demo.email;
+package com.demo.email.exception.handler;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
