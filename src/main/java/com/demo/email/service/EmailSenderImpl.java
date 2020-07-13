@@ -30,15 +30,23 @@ public class EmailSenderImpl implements EmailSender {
         }
         List<Long> sentEmailIds = new ArrayList<>();
         for (Email email : emails) {
-            try {
-                sendEmail(email);
-                emailService.updateStatusToSent(email);
-                sentEmailIds.add(email.getId());
-            } catch (MailException e) {
-                log.error(e);
+            Long emailId = sendAndUpdateStatus(email);
+            if (emailId != null) {
+                sentEmailIds.add(emailId);
             }
         }
         return sentEmailIds;
+    }
+
+    private Long sendAndUpdateStatus(Email email) {
+        try {
+            sendEmail(email);
+            emailService.updateStatusToSent(email);
+            return email.getId();
+        } catch (MailException e) {
+            log.error(e);
+            return null;
+        }
     }
 
     private void sendEmail(Email email) {
